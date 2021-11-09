@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{title}</title>
+</head>
+<body>
+    <h1>{title}</h1>
+    <p>{message}</p>
+    <div>
+        <form action="/" method="post">
+            <input type="hidden" name="last" value="{last}">
+            <input type="hidden" name="animal" value="{animal}">
+            <div>
+                <input type="radio" id="r1" name="answer"
+                    value="{yes}" checked>
+                <label for="r1">はい</label>
+            </div>
+            <div>
+                <input type="radio" id="r2" name="answer"
+                    value="{no}">
+                <label for="r2">いいえ</label>
+            </div>
+            <input type="submit">
+        </form>
+    </div>
+</body>
+</html>

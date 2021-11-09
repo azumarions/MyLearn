@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{title}</title>
+</head>
+<body>
+    <h1>{title}</h1>
+    <p>{message}</p>
+    <div>
+        <form action="/end" method="post">
+            <input type="hidden" name="last" value="{last}">
+            <input type="hidden" name="animal" value="{animal}">
+            <div>
+                <p>動物の名前:</p>
+                <input type="text" name="animalname">
+            </div>
+            <div>
+                <p>その動物が正解になる質問：</p>
+                <input type="text" name="question" size="60">
+            </div>
+            <input type="submit">
+        </form>
+    </div>
+</body>
+</html>
