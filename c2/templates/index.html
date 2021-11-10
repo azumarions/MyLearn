@@ -10,30 +10,10 @@
 <body>
     <h1>{{title}}</h1>
     <p>{{message}}</p>
-    <form action="/" method="post">
-        <div>
-            <input type="checkbox" name="check" id="ck1">
-            <label for="ck1">Checkbox</label>
-        </div>
-        <div>
-            <input type="radio" name="radio" id="r1" value="A">
-            <label for="r1">radio 1</label>
-        </div>
-        <div>
-            <input type="radio" name="radio" id="r2" value="B">
-            <label for="r2">radio 2</label>
-        </div>
-        <div>
-            <select name="sel" multiple>
-                <option>Orange</option>
-                <option>Grape</option>
-                <option>Lemon</option>
-                <option>Pineapple</option>
-            </select>
-        </div>
-        <div>
-            <input type="submit">
-        </div>
-    </form>
+    <ul>
+        {% for item in data %}
+            <li>{{data}}</li>
+        {% endfor %}
+    </ul>
 </body>
 </html>
