@@ -4,15 +4,16 @@ app = Flask(__name__)
 
 @app.route('/', methods=['GET'])
 def index():
-    data = ['windows', 'macOS', 'linuxOS', 'chromeOS']
     return render_template('index.html',
-    title = 'this is jinja template!',
-    message = data,
-    data = data)
+    title = 'Template sample',
+    message = 'this is sample page.')
 
 @app.route('/next')
 def next():
-    return render_template('next.html')
+    return render_template('next.html',
+    title = 'next page',
+    message = 'this is another page sample.',
+    data = ['one', 'two', 'three'])
 
 # @app.route('/', methods=['POST'])
 # def form():

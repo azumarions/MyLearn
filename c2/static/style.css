@@ -14,3 +14,16 @@ p {
     text-align: center;
     font-size: 14px;
 }
+
+div.footer {
+    text-align: right!;
+    border-bottom: 1px solid lightskyblue;
+    color: lightskyblue;
+    margin: 50px 0px;
+}
+
+pre {
+    background-color: white;
+    font-size: 12px;
+    padding: 10px;
+}
