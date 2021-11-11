@@ -1,6 +1,8 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session, url_for, redirect
 from flask.views import MethodView
 import random
+
+from werkzeug.utils import redirect
 
 app = Flask(__name__)
 
@@ -31,6 +33,15 @@ def sum_filter(data):
 
 app.jinja_env.filters['sum'] = sum_filter
 
+@app.context_processor
+def sample_processor():
+    def total(n):
+        total = 0
+        for i in range(n + 1):
+            total += i
+        return total
+    return dict(total = total)
+
 # @app.route('/', methods=['POST'])
 # def form():
 #     ck = request.form.get('check')
@@ -40,21 +51,26 @@ app.jinja_env.filters['sum'] = sum_filter
 #     title = "form sample",
 #     message = [ck, rd, sel])
 
+app.secret_key = b'*********************'
+
 class HelloAPI(MethodView):
     send = ''
 
     def get(self):
+        if 'send' in session:
+            msg = 'send: ' + session['send']
+            send = session['send']
+        else:
+            msg = 'please write something'
+            send = ''
         return render_template('next.html',
         title = 'next page',
-        message = 'please write something',
-        send = HelloAPI.send)
+        message = msg,
+        send = send)
 
     def post(self):
-        HelloAPI.send = request.form.get('send')
-        return render_template('next.html',
-        title = 'next page',
-        message = 'you send: ' + HelloAPI.send,
-        send = HelloAPI.send)
+        session['send'] = request.form['send']
+        return redirect('/hello/')
 
 app.add_url_rule('/hello/', view_func=HelloAPI.as_view('hello'))
 
