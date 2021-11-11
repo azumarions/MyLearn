@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request
+from flask.views import MethodView
 import random
 
 app = Flask(__name__)
@@ -38,6 +39,24 @@ app.jinja_env.filters['sum'] = sum_filter
 #     return render_template('index.html',
 #     title = "form sample",
 #     message = [ck, rd, sel])
+
+class HelloAPI(MethodView):
+    send = ''
+
+    def get(self):
+        return render_template('next.html',
+        title = 'next page',
+        message = 'please write something',
+        send = HelloAPI.send)
+
+    def post(self):
+        HelloAPI.send = request.form.get('send')
+        return render_template('next.html',
+        title = 'next page',
+        message = 'you send: ' + HelloAPI.send,
+        send = HelloAPI.send)
+
+app.add_url_rule('/hello/', view_func=HelloAPI.as_view('hello'))
 
 if __name__ == '__main__':
     app.debug = True
