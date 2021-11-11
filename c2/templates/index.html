@@ -10,6 +10,8 @@ index
 
 {% block content %}
 <p>{{ message }}</p>
+<p>Total: {{ data | sum }}</p>
+<pre>{{ data }}</pre>
 {% endblock %}
 
 {% block footer %}
