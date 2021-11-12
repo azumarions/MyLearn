@@ -76,4 +76,4 @@ app.add_url_rule('/hello/', view_func=HelloAPI.as_view('hello'))
 
 if __name__ == '__main__':
     app.debug = True
-    app.run(host='localhost')
+    app.run(host='localhost', port=5001)
