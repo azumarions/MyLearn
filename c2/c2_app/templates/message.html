@@ -35,27 +35,24 @@ Message
             {% endfor %}
         </ul>
     </div>
+
+    <div class="tab-pane fade" id="frms" role="tavpanel">
+        <h5 class="mt-4">
+            post your message:
+        </h5>
+        <div class="card mt-4">
+            <div class="card-body">
+                <form action="/" method="post">
+                    <div class="form-group">
+                        <label for="comment">message</label>
+                        <input type="text" class="form-control col" id="comment" name="comment">
+                        <input type="submit" value="POST NOW!" class="btn btn-promary col-3 col-sm-3 col-md-2 col-lg-2">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
-<div class="logout"><a href="/logout">Logout</a></div>
-<p>{{ message }}</p>
-<form action="/" method="post">
-    <table>
-        <tr>
-            <th>Message</th>
-            <td>
-                <input type="text" name="comment" width="80">
-            </td>
-            <td>
-                <input type="submit" value="POST NOW!">
-            </td>
-        </tr>
-    </table>
-</form>
-<ul>
-    {% for item in data | reverse %}
-        <li>{{item[1]}} ({{item[0]}})</li>
-    {%  endfor %}
-</ul>
 {% endblock %}
 
 {% block footer %}
