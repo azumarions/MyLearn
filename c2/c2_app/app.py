@@ -11,9 +11,10 @@ message_data = []
 def index():
     global message_data
     if 'login' in session and session['login']:
-        msg = 'Login id:' + session['id']
+        msg = 'Login id: ' + session['id']
         return render_template('message.html',
-        title = msg,
+        title = 'Messages',
+        message = msg,
         data = message_data)
     else:
         return redirect('/login')
