@@ -9,15 +9,9 @@ message_data = []
 
 @app.route('/', methods=['GET'])
 def index():
-    global message_data
-    if 'login' in session and session['login']:
-        msg = 'Login id: ' + session['id']
-        return render_template('message.html',
-        title = 'Messages',
-        message = msg,
-        data = message_data)
-    else:
-        return redirect('/login')
+    return render_template('index.html',
+    title = 'index',
+    message = '*Vue.js')
 
 @app.route('/', methods=['POST'])
 def form():

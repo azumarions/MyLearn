@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+
+{% block title %}
+login
+{% endblock %}
+
+{% block headline %}
+{{ title }}
+{% endblock %}
+
+{% block content %}
+<div class="mb-3" id="msg">{{ message }}</div>
+
+<div id="app" class="m-3">
+    <mycomp />
+</div>
+
+{% raw %}
+<script type="text/x-template" id="mycomp-template">
+    <div>
+        <div class="alert alert-info h5">
+            Total: {{total}}
+        </div>
+        <div class="form-group">
+            <label for="id">Number:</label>
+            <input type="number"  class="form-control" 
+                id="num" name="num" v-model="num">
+        </div>
+    </div>
+</script>
+{% endraw %}
+
+
+<!-- Vue.js script -->
+<script>
+// mycomp object
+Vue.component('mycomp', {
+    template: '#mycomp-template',
+    data: function(){
+        return { 
+            num: 0 
+        };
+    },
+    computed:{
+        total: function() {
+            var re = 0;
+            for (var i = 1;i <= this.num;i++) {
+                re += i;
+            }
+            return re;
+        }
+    }
+});
+
+new Vue({
+    el: '#app'
+});
+</script>
+{% endblock %}
+
+{% block footer %}
+copyright 2019 SYODA-Tuyano.
+{% endblock %}
