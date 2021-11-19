@@ -1,0 +1,7 @@
+div.logout {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    font-weight: bold;
+    font-size: 12px;
+}

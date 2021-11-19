@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+
+{% block title %}
+login
+{% endblock %}
+
+{% block headline %}
+{{ title }}
+{% endblock %}
+
+{% block content %}
+{%  if err %}
+<p class="alert alert-warning"></p>
+{% else %}
+<p class="alert alert-light"></p>
+{% endif %}
+<p>{{ message }}</p>
+
+<div class="card">
+    <div class="card-header">
+        <h4 class="card-title">
+            Login form:
+        </h4>
+    </div>
+    <div class="card-body">
+        <form method="post" action="/login">
+            <div class="form-group">
+                <label for="id">id</label>
+                <input type="text" class="form-control"
+                id="id" name="id" value="{{id}}">
+                <small class="form-text text-muted">
+                    *idを入力
+                </small>
+            </div>
+            <div class="form-group">
+                <label for="pass">password</label>
+                <input type="password" class="form-control" id="pass" name="pass">
+                <small class="form-text text-muted">
+                    *パスワードを入力
+                </small>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Login">
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+copyright 2019 SYODA-Tuyano.
+{% endblock %}
