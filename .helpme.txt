@@ -1,0 +1,4 @@
+pip is not available because this env is anaconda.
+so please use 'conda install -module'.
+if you cannt success install, enter this command 'source activate -conda env' and 'pip install -module'.
+if you dont know -conda env, please enter 'conda info --envs'.
