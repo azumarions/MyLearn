@@ -59,12 +59,18 @@ Message
             <h5 class="p-3 h5 text-center">
                 * Posted Messages *
             </h5>
-            <ul class="list-group list-group-flush">
-                <li v-for="item in msg_data"
-                        class="list-group-item">
-                    {{item[1]}} ({{item[0]}})
-                </li>
-            </ul>
+            <table class="table table-hover">
+                <thead>
+                    <tr><th>Name</th>
+                        <th>Created</th></tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(item, key) in msg_data" class="clickable-row" v-bind:data-id="item.id">
+                        <td>{{item.user}}</td>
+                        <td>{{item.created}}</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
     <!-- Second Tab -->
@@ -86,6 +92,27 @@ Message
                             POST NOW!</button>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- QRCode Dialog -->
+<div class="modal fade" id="QRDLOG">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div v-if="qr_msg != null" class="card">
+                <div class="card-header">
+                    <h4 class="card-title">
+                        {{qr_msg.user}} さんのメッセージ：
+                    </h4>
+                </div>
+                <div class="card-body text-center">
+                    <img width="300px" v-bind:src="qr_msg" alt="QR code">
+                </div>
+                <div class="card-footer">
+                    <h6 class="text-right">{{qr_msg.created}}</h6>
                 </div>
             </div>
         </div>
