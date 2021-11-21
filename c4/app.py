@@ -1,77 +1,89 @@
-from logging import PercentStyle
-from os import O_RANDOM
-from re import T
-from flask import Flask, render_template, request, session, redirect, jsonify, current_app, g
+from flask import Flask, render_template, request, session, \
+    redirect, jsonify, current_app, g
+
 
 import sqlite3
 import json
 from datetime import datetime
 
-from sqlalchemy import create_engine, Column, Integer, String, Text, DateTime, ForeignKey, engine
+
+from sqlalchemy import create_engine, Column, Integer, String, \
+    Text, DateTime, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.orm.exc import NoResultFound
+
 
 import qrcode as qr
 from PIL import Image
 import base64
 from io import BytesIO
-import pickle
-
-from sqlalchemy.orm.session import Session
 
 
 app = Flask(__name__)
 app.secret_key = b'random string...'
 
+
 engine = create_engine('sqlite:///sample.sqlite3')
+
 
 # get QRCode data.
 def get_qrdata(s):
     qr_img = qr.make(s)
 
+
     byte_buf = BytesIO()
     qr_img.save(byte_buf, format="png")
     qr_data = byte_buf.getvalue()
-    b64_data = 'data:image/png;base64,' + base64.b64encode(qr_data).decode("utf-8")
+    b64_data = 'data:image/png;base64,' + \
+        base64.b64encode(qr_data).decode("utf-8")
     return b64_data
+
 
 # base model
 Base = declarative_base()
 
+
 # model class
+
+
 class User(Base):
     __tablename__ = 'users'
-
+ 
     id = Column(Integer, primary_key=True)
     name = Column(String(255))
     password = Column(String(255))
 
+
     def to_dict(self):
         return {
-            'id': int(self.id),
-            'name': str(self.name),
-            'password': str(self.password)
+            'id':int(self.id), 
+            'name':str(self.name), 
+            'password':str(self.password)
         }
+
 
 class Message(Base):
     __tablename__ = 'messages'
-
+ 
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer(), ForeignKey('users.id'))
+    users_id = Column(Integer(), ForeignKey('users.id'))
     message = Column(String(255))
     created = Column(DateTime())
 
-    user = relationship('User')
-    
+
+    user = relationship('User') 
+
+
     def to_dict(self):
         return {
-            'id': int(self.id),
-            'user_id': int(self.user_id),
-            'message': str(self.message),
-            'created': str(self.created),
-            'user': str(self.user.name)
+            'id':int(self.id), 
+            'users_id':int(self.users_id), 
+            'message':str(self.message), 
+            'created':str(self.created),
+            'user':str(self.user.name)
         }
+
 
 # get Model-list Dictionary
 def get_by_list(arr):
@@ -80,16 +92,18 @@ def get_by_list(arr):
         res.append(item.to_dict())
     return res
 
+
 # access top page.
 @app.route('/', methods=['GET'])
 def index():
-    return render_template('index.html',
-    login = False,
-    title = 'Messages',
-    message = 'not logined....',
-    data = [])
+    return render_template('message.html', \
+        login=False, \
+        title='Messages', \
+        message='not logined...', 
+        data=[] )
 
-# post message
+
+# post message.
 @app.route('/post', methods=['POST'])
 def post_msg():
     id = request.form.get('id')
@@ -97,11 +111,12 @@ def post_msg():
     created = datetime.now()
     Session = sessionmaker(bind=engine)
     ses = Session()
-    msg_obj = Message(user_id=id, message=msg, created=created)
+    msg_obj = Message(users_id=id, message=msg, created=created)
     ses.add(msg_obj)
     ses.commit()
     ses.close()
     return 'True'
+
 
 # get messages.
 @app.route('/messages', methods=['POST'])
@@ -112,7 +127,8 @@ def get_msg():
     msgs = get_by_list(re)
     return jsonify(msgs)
 
-# get QRcode Data
+
+# get QRCode Data
 @app.route('/qr', methods=['POST'])
 def get_qr():
     id = request.form.get('id')
@@ -123,11 +139,13 @@ def get_qr():
     dic['qr'] = get_qrdata(re.message)
     return jsonify(dic)
 
+
 # login form sended.
 @app.route('/login', methods=['POST'])
 def login_post():
     name = request.form.get('name')
     pswd = request.form.get('password')
+
 
     Session = sessionmaker(bind=engine)
     ses = Session()
@@ -142,9 +160,10 @@ def login_post():
         if pswd == usr.password:
             flg = str(usr.id)
         else:
-            flg = 'False'
+            flg = 'False'  
     ses.close()
     return flg
+
 
 if __name__ == '__main__':
     app.debug = True
