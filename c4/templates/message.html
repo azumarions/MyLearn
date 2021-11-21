@@ -65,10 +65,11 @@ Message
                         <th>Created</th></tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(item, key) in msg_data" class="clickable-row" v-bind:data-id="item.id">
-                        <td>{{item.user}}</td>
-                        <td>{{item.created}}</td>
-                    </tr>
+                <tr v-for="(item,key) in msg_data" class="clickable-row" 
+                    v-bind:data-id="item.id">
+                    <td>{{item.user}}</td>
+                    <td>{{item.created}}</td>
+                </tr>
                 </tbody>
             </table>
         </div>
@@ -109,7 +110,7 @@ Message
                     </h4>
                 </div>
                 <div class="card-body text-center">
-                    <img width="300px" v-bind:src="qr_msg" alt="QR code">
+                    <img width="300px" v-bind:src="qr_msg.qr" alt="QR code">
                 </div>
                 <div class="card-footer">
                     <h6 class="text-right">{{qr_msg.created}}</h6>
@@ -169,127 +170,152 @@ Message
 
 
 <script>
-// message_board object
-Vue.component('message_board', {
-    template: '#message_board-template',
-    data: function() {
-        return {
-            in_out:'login',
-            login_flg:false, login_id:'',
-            form_id:'', form_pass:'',
-            login_msg:'Login form:',
-            alert_msg:'※ログインして下さい。',
-            post_msg:'',
-            msg_data:[],
-        }
-    },
-    methods:{
-        // check login/logout.
-        in_out_check: function(e) {
-            if (this.login_flg) {
-                this.logout();
-            } else {
-                this.show_login();
+    // message_board object
+    Vue.component('message_board', {
+        template: '#message_board-template',
+        data: function() {
+            return {
+                in_out:'login', login_flg:false,
+                login_id:-1, login_user:'',
+                form_id:'', form_pass:'',
+                login_msg:'Login form:',
+                alert_msg:'※ログインして下さい。',
+                post_msg:'',
+                msg_data:[],
+                qr_msg:null,
             }
         },
-        //show login dialog
-        show_login: function() {
-            this.form_id = '';
-            this.form_pass = '';
-            this.login_msg = 'Login Form:';
-            $('#login').modal('show');
-        },
-        // access server and logined.
-        login: function(e) {
-            let formData = new FormData();
-            formData.append("id", this.form_id);
-            formData.append("pass", this.form_pass);
-            let self = this;
-            $.ajax({
-                type: 'POST',
-                url: '/login',
-                data: formData,
-                processData: false,
-                contentType: false,
-
-
-                success: function (data) {
-                    if (data == 'True'){
-                        self.in_out = 'logout';
-                        self.login_flg = true;
-                        self.login_id = self.form_id;
-                        self.alert_msg = '※ログインしました！';
-                        self.form_id = '';
-                        self.form_pass = '';
-                        $('#login').modal('hide');
-                        self.getMsg();
-                    } else {
-                        self.login_msg = 'パスワードが違います。';
-                        self.pass = '';
+        methods:{
+            // check login/logout.
+            in_out_check: function(e) {
+                if (this.login_flg) {
+                    this.logout();
+                } else {
+                    this.show_login();
+                }
+            },
+            //show login dialog
+            show_login: function() {
+                this.form_id = '';
+                this.form_pass = '';
+                this.login_msg = 'Login Form:';
+                $('#login').modal('show');
+            },
+            // access server and logined.
+            login: function(e) {
+                let formData = new FormData();
+                formData.append("name", this.form_id);
+                formData.append("password", this.form_pass);
+                let self = this;
+                $.ajax({
+                    type: 'POST',
+                    url: '/login',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+    
+    
+                    success: function (data) {
+                        if (data != 'False'){
+                            self.getMsg();
+                            self.in_out = 'logout';
+                            self.login_flg = true;
+                            self.login_id = data * 1;
+                            self.login_user = self.form_id;
+                            self.alert_msg = '※' + self.login_user
+                                 + 'でログインしました！';
+                            self.form_id = '';
+                            self.form_pass = '';
+                            $('#login').modal('hide');
+                            self.getMsg();
+                        } else {
+                            self.login_msg = 'パスワードが違います。';
+                            self.pass = '';
+                        }
+                    },
+                    error: function(request, status, err) {
+                        self.login_msg = '※問題が発生しました。';
                     }
-                },
-                error: function(request, status, err) {
-                    self.login_msg = '※問題が発生しました。';
-                }
-            });
-        },
-        // logout.
-        logout: function() {
-            console.log('logout');
-            this.in_out = 'login';
-            this.msg_data = [];
-            this.login_flg = false;
-            this.login_id = '';
-            this.alert_msg = '※ログアウトしました。'
-        },
-        // post message.
-        postMsg: function() {
-            let formData = new FormData();
-            formData.append("id", this.login_id);
-            formData.append("comment", this.post_msg);
-            let self = this;
-            $.ajax({
-                type: 'POST',
-                url: '/post',
-                data: formData,
-                processData: false,
-                contentType: false,
-
-
-                success: function (data) {
-                    if (data == 'True') {
-                        self.alert_msg = '※メッセージを送信しました。'
-                        self.getMsg();
+                });
+            },
+            // logout.
+            logout: function() {
+                this.in_out = 'login';
+                this.msg_data = [];
+                this.login_flg = false;
+                this.login_id = -1;
+                this.login_user = '';
+                this.alert_msg = '※ログアウトしました。'
+            },
+            // post message.
+            postMsg: function() {
+                let formData = new FormData();
+                formData.append("id", this.login_id);
+                formData.append("message", this.post_msg);
+                let self = this;
+                $.ajax({
+                    type: 'POST',
+                    url: '/post',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+    
+    
+                    success: function (data) {
+                        if (data == 'True') {
+                            self.alert_msg = '※メッセージを送信しました。'
+                            self.getMsg();
+                        }
+                    },
+                    error: function(request, status, err) {
+                        self.alert_msg = '※メッセージ送信に問題が発生しました。';
                     }
-                },
-                error: function(request, status, err) {
-                    self.alert_msg = '※メッセージ送信に問題が発生しました。';
-                }
-            });
+                });
+            },
+            // get all messages.
+            getMsg: function() {
+                let self = this;
+                $.ajax({
+                    type: 'POST',
+                    url: '/messages',
+                    processData: false,
+                    contentType: false,
+    
+    
+                    success: function (data) {
+                        $(".clickable-row").unbind('click');
+                        self.msg_data = data;
+                        self.post_msg = '';
+                        $(".clickable-row").click(function(e) {
+                            let clicked_id = e.delegateTarget.dataset['id'];
+                            let formData = new FormData();
+                            formData.append("id", clicked_id);
+                            $.ajax({
+                                type: 'POST',
+                                url: '/qr',
+                                data: formData,
+                                processData: false,
+                                contentType: false,
+    
+    
+                                success: function (data) {
+                                    self.qr_msg = data;
+                                    $('#QRDLOG').modal('show');
+                                },
+                                error: function(request, status, err) {
+                                    self.alert_msg = '※メッセージ送信に問題が発生しました。';
+                                }
+                            });
+                        });
+                        $('#msg_tab_link').tab('show');
+                    },
+                    error: function(request, status, err) {
+                        self.alert_msg = '※メッセージ送信に問題が発生しました。';
+                    }
+                });
+            }, 
         },
-        // get all messages.
-        getMsg: function() {
-            let self = this;
-            $.ajax({
-                type: 'POST',
-                url: '/messages',
-                processData: false,
-                contentType: false,
-
-
-                success: function (data) {
-                    console.log(data);
-                    self.msg_data = data.reverse();
-                    self.post_msg = '';
-                    $('#msg_tab_link').tab('show');
-                },
-                error: function(request, status, err) {
-                    self.alert_msg = '※メッセージ送信に問題が発生しました。';
-                }
-            });
-        }
-    },
-});
+    });
 
 
 // start Vue.
